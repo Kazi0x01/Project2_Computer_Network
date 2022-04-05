@@ -18,7 +18,7 @@ def get_event():
     idx = randint(0, leng-1)
     obj1 = my_objects[idx]
     n_data = pickle.dumps(obj1)
-    n_data = bytes("{}".format(len(n_data) < HEADERSIZE).encode('utf-8'))+n_data
+    # n_data = bytes(f"{len(n_data):<{HEADERSIZE}}", 'utf-8')+n_data
     
     return n_data
 

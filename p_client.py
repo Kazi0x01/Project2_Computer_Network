@@ -6,10 +6,6 @@ from pickle_data import get_event
 from pickle_data import HEADERSIZE
 
 
-SND_PT = 4343
-
-
-
 
 try:
     sock_fd  = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  #Initialization a UDP socket
@@ -26,29 +22,29 @@ m_port = int(input("[*] Enter the port for socket :"))  # Input port number for 
 
 
 # Exceptional handling 
-try:
-    sock_fd.bind(('0.0.0.0', m_port))   #Binding the socket to the user defined port
-    print("[+] socket binded")
-except socket.error as err:         #Catching any error or exception thrown during binding process
-    print("[-] Error failed to bind the socket")
-    raise
+# try:
+#     sock_fd.bind(('0.0.0.0', m_port))   #Binding the socket to the user defined port
+#     print("[+] socket binded")
+# except socket.error as err:         #Catching any error or exception thrown during binding process
+#     print("[-] Error failed to bind the socket")
+#     raise
 
 
-addr = raw_input('[*] Enter the address of peer :')     #Taking peer_address as input from user
-port = int(input('[*] Enter the port of peer : '))      #Takign peer_port as input from user
-
-
-
-sock_fd.sendto(b'\n[+] Hi from peer1', (addr, port))          #Sending Msg to peer indicating that the conenction is established
-msg = sock_fd.recv(1024).decode()                       #Receiving UDP packet from any address send to m_port 
-
-print('[+] Peer msg {}'.format(msg))                    
+# addr = raw_input('[*] Enter the address of peer :')     #Taking peer_address as input from user
+# port = int(input('[*] Enter the port of peer : '))      #Takign peer_port as input from user
 
 
 
-print("[+] Connected to peer")
-print("[*] Address : {}".format(addr))
-print("[*] Port : {}".format(port))
+# sock_fd.sendto(b'\n[+] Hi from peer1', (addr, port))          #Sending Msg to peer indicating that the conenction is established
+# msg = sock_fd.recv(1024).decode()                       #Receiving UDP packet from any address send to m_port 
+
+# print('[+] Peer msg {}'.format(msg))                    
+
+
+
+# print("[+] Connected to peer")
+# print("[*] Address : {}".format(addr))
+# print("[*] Port : {}".format(port))
 
 
 #Subroutine for the thread which listen for any incoming socket connection 
@@ -76,7 +72,7 @@ def l_subroutine():
     while True:
         msg = sock_fd.recv(1024).decode()
         # print(pickle.loads(msg[HEADERSIZE:]))
-        print("[+]peer_msg: {}".format(msg))
+        print("[+]peer_msg: {}".format(pickle.loads(msg)))
 
     
 
@@ -106,16 +102,18 @@ except socket.error as err:
     raise 
 
 
-sock_fd.bind(('0.0.0.0',SND_PT))
 
 while True: #Infinite loop to send msg
     msg = raw_input('> ')
+    addr = raw_input('[*] Enter the address of peer :') #Taking peer_address as input from userv
+    port = int(input('[*] Enter the port of peer : '))  #Takign peer_port as input from user
+
     if msg == "EVENT":
         pkl_data = get_event()
         sock_fd.sendto(pkl_data, (addr, port))
     else:
         msg = pickle.dumps(msg)
-        msg = bytes("{}".format(len(msg) < HEADERSIZE).encode('utf-8'))+msg
-        sock_fd.sendto(msg.encode(), (addr, port))
+        # msg = bytes("{}".format(len(msg) < HEADERSIZE).encode('utf-8'))+msg
+        sock_fd.sendto(msg, (addr, port))
 
 

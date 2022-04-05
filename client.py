@@ -4,7 +4,6 @@ import threading
 from pickle_data import get_event
 from pickle_data import HEADERSIZE
 
-SND_PT = 3434
 
 try:
     sock_fd  = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #Initialization a UDP socket
@@ -24,24 +23,24 @@ except socket.error as err:          #Catching any error or exception thrown dur
     raise
 
 
-addr = raw_input('[*] Enter the address of peer :') #Taking peer_address as input from userv
-port = int(input('[*] Enter the port of peer : '))  #Takign peer_port as input from user
+# addr = raw_input('[*] Enter the address of peer :') #Taking peer_address as input from userv
+# port = int(input('[*] Enter the port of peer : '))  #Takign peer_port as input from user
 
 
-msg = sock_fd.recv(1024).decode()   #Receiving UDP packet from any address send to m_port 
+# msg = sock_fd.recv(1024).decode()   #Receiving UDP packet from any address send to m_port 
 
 
-print('[+] Peer msg {}'.format(msg))
+# print('[+] Peer msg {}'.format(msg))
 
-sock_fd.sendto(b'\n[+] Hi from peer2', (addr, port))
-
-
+# sock_fd.sendto(b'\n[+] Hi from peer2', (addr, port))
 
 
 
-print("[+] Connected to peer")
-print("[*] Address : {}".format(addr))
-print("[*] Port : {}".format(port))
+
+
+# print("[+] Connected to peer")
+# print("[*] Address : {}".format(addr))
+# print("[*] Port : {}".format(port))
 
 #Subroutine for the thread which listen for any incoming socket connection 
 def l_subroutine():
@@ -67,7 +66,8 @@ def l_subroutine():
     while True:
         msg = sock_fd.recv(1024).decode()
         # print(pickle.loads(msg[HEADERSIZE:]))
-        print("[+]peer_msg: {}".format(msg))
+        print("[+]peer_msg: {}".format(pickle.loads(msg)))
+
 
     
 
@@ -95,9 +95,10 @@ except socket.error as err:
     print("[-] Error setting option")    
     raise
 
-sock_fd.bind(('0.0.0.0',SND_PT))
 while True:
     msg = raw_input('> ')
+    addr = raw_input('[*] Enter the address of peer :') #Taking peer_address as input from userv
+    port = int(input('[*] Enter the port of peer : '))  #Takign peer_port as input from user
 
 
     if msg == "EVENT":
@@ -105,7 +106,7 @@ while True:
         sock_fd.sendto(pkl_data, (addr, port))
     else:
         msg = pickle.dumps(msg)
-        msg = bytes("{}".format(len(msg) < HEADERSIZE).encode('utf-8'))+msg
-        sock_fd.sendto(msg.encode(), (addr, port))
+        # msg = bytes("{}".format(len(msg) < HEADERSIZE).encode('utf-8'))+msg
+        sock_fd.sendto(msg, (addr, port))
 
 
