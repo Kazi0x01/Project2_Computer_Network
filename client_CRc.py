@@ -14,6 +14,33 @@ except socket.error as err:     # Catch any errors or exception thrown during in
 
 m_port = int(input("[*] Enter the port for socket :"))  # Input port number for socket  
 
+# Exceptional handling 
+try:
+    sock_fd.bind(('0.0.0.0', m_port))   #Binding the socket to the user defined port
+    print("[+] socket binded")
+except socket.error as err:          #Catching any error or exception thrown during binding process
+    print("[-] Error failed to bind the socket")
+    raise
+
+
+# addr = raw_input('[*] Enter the address of peer :') #Taking peer_address as input from userv
+# port = int(input('[*] Enter the port of peer : '))  #Takign peer_port as input from user
+
+
+# msg = sock_fd.recv(1024).decode()   #Receiving UDP packet from any address send to m_port 
+
+
+# print('[+] Peer msg {}'.format(msg))
+
+# sock_fd.sendto(b'\n[+] Hi from peer2', (addr, port))
+
+
+
+
+
+# print("[+] Connected to peer")
+# print("[*] Address : {}".format(addr))
+# print("[*] Port : {}".format(port))
 
 def xor(x, y):
     res = []
@@ -65,8 +92,7 @@ def decoder(data, G):
     remainder =crc(data_crc, G) #find the reminder of the crc
 
     return str(remainder)
- 
-
+  
 
 #Subroutine for the thread which listen for any incoming socket connection 
 def l_subroutine():
@@ -91,7 +117,9 @@ def l_subroutine():
     sock_fd.bind(('0.0.0.0', m_port)) #Binding the socket to port m_port
     while True:
         msg = sock_fd.recv(1024).decode()
-                
+        # print("[+]peer_msg: {}".format(pickle.loads(msg)))
+
+        
         G = "1001" #same G on both peers
 
         R = decoder(msg, G)
@@ -131,26 +159,38 @@ except socket.error as err:
     print("[-] Error setting option")    
     raise
 
+ 
+
+
+    
+
+
 while True:
-    msg = raw_input('> ')
-    addr = raw_input('[*] Enter the address of peer :') #Taking peer_address as input from userv
-    port = int(input('[*] Enter the port of peer : '))  #Takign peer_port as input from user
+    input = raw_input('> ')
 
     bin_data  = pickle.dumps(input) #covert string to binary
     G= "1001"                                           #four bit checker
     msg = encoder(bin_data,G)
 
+    addr = raw_input('[*] Enter the address of peer :') #Taking peer_address as input from userv
+    port = int(raw_input('[*] Enter the port of peer : '))  #Takign peer_port as input from user
+
 
     if msg == "EVENT":
         pkl_data = get_event()
         sock_fd.sendto(pkl_data, (addr, port))
-    elif msg == "UPDATE":
-        id_x = raw_input('[*] x coordinate :')
-        id_y = raw_input('[*] x coordinate :')
-        val = raw_input('[*] new value :')
-
-
     else:
+        # msg = pickle.dumps(msg)  #check if this works 
+       
         sock_fd.sendto(msg, (addr, port))
+
+
+
+ 
+
+
+
+
+
 
 
